@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <style>
+        table {
+            margin: auto;
+        }
+        td {
+            width: 60px;
+            height: 60px;
+            border: solid 5px;
+            font-size: 50px;
+            text-align: center;
+        }
+        td:hover {
+            cursor: pointer;
+        }
+
+        .form {
+            width: 400px;
+            height: 40px;
+            margin: auto;
+            display: block;
+            text-align: center;
+        }
+
+        #name {
+            width: 60%;
+            height: 30px;
+            border-top-left-radius: 10px;
+            border-bottom-left-radius: 10px;
+            padding: 1px 10px;
+        }
+        #submit {
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px;
+            width: 20%;
+            height: 36px;
+        }
+    </style>
+</head>
+<body>
+    <div class="form">
+        <input type="text" name="username" id="name" placeholder="Enter your username"><button id="submit">Submit</button>
+    </div>
+    <table>
+        <tr>
+            <td id="1"></td>
+            <td id="2"></td>
+            <td id="3"></td>
+        </tr>
+        <tr>
+            <td id="4"></td>
+            <td id="5"></td>
+            <td id="6"></td>
+        </tr>
+        <tr>
+            <td id="7"></td>
+            <td id="8"></td>
+            <td id="9"></td>
+        </tr>
+    </table>
+
+    <button id="newGame">New Game</button>
+</body>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+        $(function () {
+            var socket = io();
+            letter = 'X';
+
+            socket.on('box-ticked', function(data) {
+                $('#' + data).css('background', 'rgba(100,100,100,0.5)');
+                $('#' + data).html(letter);
+            });
+
+            socket.on('game-created', function(data) {
+                console.log(data);
+            });
+
+            $('#newGame').on('click', function(){
+                socket.emit('new-game', {player1 : "Brandon", player2: "Samson"});
+            });
+
+            $('td').each(function() {
+                $(this).on('click', function() {
+                    if ($(this).html() == '') {
+                        socket.emit('box-ticked', $(this).attr('id')); //sending info to backend
+                    }
+                    else {
+                        alert('already clicked');
+                    }
+                });
+            })
+        });
+    </script>
+</html>
